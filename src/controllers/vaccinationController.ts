@@ -100,7 +100,7 @@ const summary = (req: Request, res: Response) => {
       {
         "$group": {"_id": "$YearWeekISO", "totalNumberDosesReceived": {"$sum": 1}}
       },
-    ], (err: Error, vaccinations:any)=>{
+    ], (err: Error, vaccinations:Array<{"_id": string, "totalNumberDosesReceived": number}>)=>{
         if (err) {
             res.send(err);
         }
