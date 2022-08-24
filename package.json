@@ -1,0 +1,25 @@
+{
+  "name": "vaccination-status",
+  "version": "1.0.0",
+  "description": "Simple rest api for vaccination status in in EU/EEA region",
+  "main": "index.ts",
+  "scripts": {
+    "build": "tsc --w",
+    "start": "tsc && ts-node ./dist/index.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "express": "^4.18.1",
+    "mongodb": "^4.9.0",
+    "mongoose": "^6.5.2",
+    "nodemon": "^2.0.19"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-stage-0": "^6.24.1"
+  },
+  "repository": "git@github.com:aswinramani/vaccination-status.git",
+  "author": "aswinramani",
+  "license": "MIT"
+}
