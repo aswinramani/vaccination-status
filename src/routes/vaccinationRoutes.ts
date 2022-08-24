@@ -7,7 +7,7 @@ const routes = (app:any) => {
         // middleware
         console.info('in middleware', req['method']);
         next();
-    }, vaccinationController.get);
+    }, vaccinationController.summary);
     
 }
 
