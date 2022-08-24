@@ -4,10 +4,15 @@ import * as bodyParser from "body-parser";
 
 const app = express();
 const PORT:number =  4000;
-const uri:string = "";
+const uri:string = "mongodb+srv://aswin-ramani:U0fQp5ajwsYpChtp@cluster0.jmxk5tk.mongodb.net/?retryWrites=true&w=majority";
 
 
-mongoose.connect(uri);
+mongoose.connect(uri, (err) => {
+    if (err) {
+        console.error(err);
+    }
+    console.info('connected to db');
+});
 
 // bodyparser setup
 app.use(bodyParser.urlencoded({extended: true}));
