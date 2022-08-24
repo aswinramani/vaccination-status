@@ -7,18 +7,16 @@ const app = express();
 const PORT:number =  4000;
 const uri:string = "";
 
-
 mongoose.connect(uri, (err) => {
-    if (err) {
-        console.error(err);
-    }
-    console.info('connected to db');
+  if (err) {
+    console.error(err);
+  }
 });
 
-// bodyparser setup
+// bodyparser
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
-
+// routes
 vaccinationRoutes(app);
 
 app.get('/', (req, res) => 
@@ -28,4 +26,3 @@ app.get('/', (req, res) =>
 app.listen(PORT, () =>
   console.info('server is up and running on port => ', PORT)
 );
-
