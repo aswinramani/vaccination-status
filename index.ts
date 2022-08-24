@@ -1,6 +1,7 @@
 import * as express from 'express';
 import * as mongoose from 'mongoose';
 import * as bodyParser from "body-parser";
+import vaccinationRoutes from './src/routes/vaccinationRoutes';
 
 const app = express();
 const PORT:number =  4000;
@@ -17,6 +18,8 @@ mongoose.connect(uri, (err) => {
 // bodyparser setup
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+
+vaccinationRoutes(app);
 
 app.get('/', (req, res) => 
   res.send(`Node and express server running on ${PORT}`)
