@@ -64,14 +64,14 @@ const validate = (reqQuery: ReqQuery): ValidationResult  => {
   return result;
 }
 
-const prepareYearWeekList = (result: ValidationResult): Array<{"YearWeekISO": string}> => {
+const prepareYearWeekList = (result: ValidationResult): Array<string> => {
   let {startYear, startWeek, endYear, maxWeek, endWeek, minWeek} =  result;
-  let orList:Array<{"YearWeekISO": string}> = [];
+  let yearWeekList:Array<string> = [];
   let iYear:number = startYear;
   let iWeek:number = startWeek < 1 ? 1 : startWeek;
   while (iYear <= endYear) {
     if (iWeek <= maxWeek) {
-      orList.push({"YearWeekISO": `${iYear}-W${iWeek < 10 ? '0'+ iWeek : iWeek}`});
+      yearWeekList.push(`${iYear}-W${iWeek < 10 ? '0'+ iWeek : iWeek}`);
       if (iYear === endYear && iWeek === endWeek) {
         break;
       }
@@ -81,7 +81,7 @@ const prepareYearWeekList = (result: ValidationResult): Array<{"YearWeekISO": st
       iYear++;
     }
   }
-  return orList;
+  return yearWeekList;
 }
 
 const summary = (req: Request, res: Response) => {
@@ -92,11 +92,10 @@ const summary = (req: Request, res: Response) => {
       res.status(400);
       res.send(result['msg']);
     }
-    let orList:Array<{"YearWeekISO": string}> = prepareYearWeekList(result);
+    let yearWeekList:Array<string> = prepareYearWeekList(result);
     Vaccination.aggregate([
       { "$match": {
-        "$and": [{"ReportingCountry": reQuery['c']}],
-        "$or": orList,
+        "$and": [{"ReportingCountry": reQuery['c']}, {"YearWeekISO": {"$in": yearWeekList}}],
       }},
       {
         "$group": {"_id": "$YearWeekISO", "totalNumberDosesReceived": {"$sum": 1}}

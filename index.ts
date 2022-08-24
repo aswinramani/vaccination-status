@@ -7,7 +7,7 @@ const app = express();
 const PORT:number =  4000;
 const uri:string = "";
 
-mongoose.connect(uri, (err) => {
+mongoose.connect(uri, {}, (err) => {
   if (err) {
     console.error(err);
   }
