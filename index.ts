@@ -4,7 +4,7 @@ import * as bodyParser from "body-parser";
 
 const app = express();
 const PORT:number =  4000;
-const uri:string = "mongodb+srv://aswin-ramani:U0fQp5ajwsYpChtp@cluster0.jmxk5tk.mongodb.net/?retryWrites=true&w=majority";
+const uri:string = "";
 
 
 mongoose.connect(uri, (err) => {
