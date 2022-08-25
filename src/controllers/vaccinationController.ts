@@ -71,13 +71,14 @@ const prepareYearWeekList = (result: ValidationResult): Array<string> => {
   let iWeek:number = startWeek < 1 ? 1 : startWeek;
   while (iYear <= endYear) {
     if (iWeek <= maxWeek) {
+      // console.info(`${iYear}-W${iWeek < 10 ? '0'+ iWeek : iWeek}`);
       yearWeekList.push(`${iYear}-W${iWeek < 10 ? '0'+ iWeek : iWeek}`);
       if (iYear === endYear && iWeek === endWeek) {
         break;
       }
       iWeek++;
     } else {
-      iWeek = minWeek
+      iWeek = minWeek;
       iYear++;
     }
   }
@@ -93,14 +94,15 @@ const summary = (req: Request, res: Response) => {
       res.send(result['msg']);
     }
     let yearWeekList:Array<string> = prepareYearWeekList(result);
+    console.log(yearWeekList);
+    let range: number = Math.ceil(yearWeekList.length / parseInt(reQuery['range']));
+    console.log(range);
     Vaccination.aggregate([
       { "$match": {
         "$and": [{"ReportingCountry": reQuery['c']}, {"YearWeekISO": {"$in": yearWeekList}}],
       }},
-      {
-        "$group": {"_id": "$YearWeekISO", "totalNumberDosesReceived": {"$sum": 1}}
-      },
-    ], (err: Error, vaccinations:Array<{"_id": string, "totalNumberDosesReceived": number}>)=>{
+      {"$bucketAuto": {groupBy: "$YearWeekISO", buckets: range, output: {NumberDosesReceived: {$sum: "$NumberDosesReceived"}}}}
+    ], (err: Error, vaccinations:any)=>{
         if (err) {
             res.send(err);
         }
@@ -115,3 +117,18 @@ const summary = (req: Request, res: Response) => {
 export const vaccinationController = {
   summary
 };
+
+/**
+ * db.vaccinations.aggregate([
+    {"$match": {"$and":[{"ReportingCountry": 'AT'}, {"YearWeekISO": {"$in": ['2021-W10', '2021-W11','2021-W12', '2021-W13','2021-W14', '2021-W15','2021-W16', '2021-W17','2021-W18', '2021-W19','2021-W20', '2021-W21', '2021-W22', '2021-W23']}}]}},
+    {"$group": {"_id": {YearWeekISO: "$YearWeekISO", NumberDosesReceived: {"$sum": "$NumberDosesReceived"}}}},
+    {$project:  {_id: 0, summary: "$_id"}}
+])
+db.vaccinations.aggregate([
+    {$bucket: {groupBy: "$YearWeekISO", boundaries: ['2020-W49', '2020-W50', '2020-W51', '2020-W52', '2020-W53', '2021-W01'], default: "Other", output: {NumberDosesReceived: {$sum: "$NumberDosesReceived"}}}},
+])
+db.vaccinations.aggregate([
+    {$bucketAuto: {groupBy: "$YearWeekISO", buckets: 5, output: {count: {$sum: 1}}}}
+])
+ * 
+ */
