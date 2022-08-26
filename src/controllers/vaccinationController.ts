@@ -71,11 +71,10 @@ const prepareYearWeekList = (result: ValidationResult): Array<string> => {
   let iWeek:number = startWeek < 1 ? 1 : startWeek;
   while (iYear <= endYear) {
     if (iWeek <= maxWeek) {
-      // console.info(`${iYear}-W${iWeek < 10 ? '0'+ iWeek : iWeek}`);
-      yearWeekList.push(`${iYear}-W${iWeek < 10 ? '0'+ iWeek : iWeek}`);
       if (iYear === endYear && iWeek === endWeek) {
         break;
       }
+      yearWeekList.push(`${iYear}-W${iWeek < 10 ? '0'+ iWeek : iWeek}`);
       iWeek++;
     } else {
       iWeek = minWeek;
@@ -98,15 +97,16 @@ const summary = (req: Request, res: Response) => {
     let range: number = Math.ceil(yearWeekList.length / parseInt(reQuery['range']));
     console.log(range);
     Vaccination.aggregate([
-      { "$match": {
-        "$and": [{"ReportingCountry": reQuery['c']}, {"YearWeekISO": {"$in": yearWeekList}}],
-      }},
-      {"$bucketAuto": {groupBy: "$YearWeekISO", buckets: range, output: {NumberDosesReceived: {$sum: "$NumberDosesReceived"}}}}
-    ], (err: Error, vaccinations:any)=>{
-        if (err) {
-            res.send(err);
-        }
-        res.send(vaccinations);
+      {"$match": {"$and":[{"ReportingCountry": reQuery['c']}, {"YearWeekISO": {"$in": yearWeekList}}]}},
+      {"$group": {"_id": "$YearWeekISO", "NumberDosesReceived": {$sum: "$NumberDosesReceived"}}},
+      {"$sort": {"_id": -1}},
+      {"$addFields": {"YearWeekISO": "$_id"}},
+      {"$project":  {"_id": 0}}
+    ],{allowDiskUse: true},(err: Error, vaccinations:any)=>{
+      if (err) {
+        res.send(err);
+      }
+      res.send(vaccinations);
     });
   } else {
     res.status(400);
@@ -119,7 +119,8 @@ export const vaccinationController = {
 };
 
 /**
- * db.vaccinations.aggregate([
+ *
+db.vaccinations.aggregate([
     {"$match": {"$and":[{"ReportingCountry": 'AT'}, {"YearWeekISO": {"$in": ['2021-W10', '2021-W11','2021-W12', '2021-W13','2021-W14', '2021-W15','2021-W16', '2021-W17','2021-W18', '2021-W19','2021-W20', '2021-W21', '2021-W22', '2021-W23']}}]}},
     {"$group": {"_id": {YearWeekISO: "$YearWeekISO", NumberDosesReceived: {"$sum": "$NumberDosesReceived"}}}},
     {$project:  {_id: 0, summary: "$_id"}}
