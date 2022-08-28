@@ -22,6 +22,18 @@ type ValidationResult = {
   endWeek: number;
 }
 
+type VaccinationResult = {
+  NumberDosesReceived: number;
+  YearWeekISO?: string;
+  startWeek?: string;
+  endWeek?: string;
+}
+
+type VaccinationSummary = {
+  summary: VaccinationResult[];
+  error?: string;
+}
+
 const validate = (reqQuery: ReqQuery): ValidationResult  => {
   const {dateFrom, dateTo} = reqQuery;
   const minYear:number = 2020;
@@ -57,8 +69,8 @@ const validate = (reqQuery: ReqQuery): ValidationResult  => {
     result['msg'] = `start year cannot be greater than ${maxYear}`;
   } else if (startWeek > maxWeek || endWeek > maxWeek) {
     result['msg'] = 'week cannot be greater than 53';
-  } else if (endYear === currentYear && endWeek > currentWeekNumber) {
-    result['msg'] = 'end week cannot be greater than current week';
+  } else if (startYear === currentYear && startWeek > currentWeekNumber) {
+    result['msg'] = 'start week cannot be greater than current week';
   }
   result['valid'] = !result['msg'].length ? result['valid'] : !result['valid'];
   return result;
@@ -89,28 +101,44 @@ const summary = (req: Request, res: Response) => {
     let reQuery: ReqQuery = req.query as ReqQuery;
     let result: ValidationResult = validate(reQuery);
     if (!result['valid']) {
-      res.status(400);
-      res.send(result['msg']);
+      // res.set('Content-Type', 'application/json')
+      res.status(400).send({'summary': [], error: result['msg']});
+    } else {
+      let yearWeekList:Array<string> = prepareYearWeekList(result);
+      // console.log(yearWeekList);
+      // let range: number = Math.ceil(yearWeekList.length / parseInt(reQuery['range']));
+      let range: number = parseInt(reQuery['range']);
+      // console.log(range);
+      Vaccination.aggregate([
+        {"$match": {"$and":[{"ReportingCountry": reQuery['c']}, {"YearWeekISO": {"$in": yearWeekList}}]}},
+        {"$group": {"_id": "$YearWeekISO", "NumberDosesReceived": {$sum: "$NumberDosesReceived"}}},
+        {"$sort": {"_id": 1}},
+        {"$addFields": {"YearWeekISO": "$_id"}},
+        {"$project":  {"_id": 0}}
+      ]
+      ,{allowDiskUse: true},(err: Error, vaccinations:VaccinationResult[])=>{
+        if (err) {
+          res.send(err);
+        }
+        let i:number = 0;
+        let end:number = range;
+        let vaccinationSummary: VaccinationSummary = {'summary': []};
+        while (i < yearWeekList.length) {
+          vaccinationSummary['summary'].push({
+            'startWeek': yearWeekList[i],
+            'endWeek': end<yearWeekList.length ? yearWeekList[end]: reQuery['dateTo'],
+            'NumberDosesReceived': vaccinations.slice(i, end).reduce((accumulator:number , vaccination:VaccinationResult):number=>{
+                return accumulator+vaccination['NumberDosesReceived'];
+              }, 0)
+          });
+          i=end;
+          end+=range;
+        }
+        res.send(vaccinationSummary);
+      });
     }
-    let yearWeekList:Array<string> = prepareYearWeekList(result);
-    console.log(yearWeekList);
-    let range: number = Math.ceil(yearWeekList.length / parseInt(reQuery['range']));
-    console.log(range);
-    Vaccination.aggregate([
-      {"$match": {"$and":[{"ReportingCountry": reQuery['c']}, {"YearWeekISO": {"$in": yearWeekList}}]}},
-      {"$group": {"_id": "$YearWeekISO", "NumberDosesReceived": {$sum: "$NumberDosesReceived"}}},
-      {"$sort": {"_id": -1}},
-      {"$addFields": {"YearWeekISO": "$_id"}},
-      {"$project":  {"_id": 0}}
-    ],{allowDiskUse: true},(err: Error, vaccinations:any)=>{
-      if (err) {
-        res.send(err);
-      }
-      res.send(vaccinations);
-    });
   } else {
-    res.status(400);
-    res.send('Missing query parameters!');
+    res.status(400).send({'summary': [], error: 'Missing query parameters!'});
   }
 }
 
