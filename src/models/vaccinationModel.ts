@@ -1,6 +1,8 @@
-import {Schema} from "mongoose";
+import * as mongoose from "mongoose";
 
-export const VaccinationSchema:Schema = new Schema({
+let Schema = mongoose.Schema;
+
+const VaccinationSchema: mongoose.Schema = new Schema({
     YearWeekISO:  String,
     FirstDose: Number,
     FirstDoseRefused: Object,
@@ -16,4 +18,6 @@ export const VaccinationSchema:Schema = new Schema({
     TargetGroup: String,
     Vaccine: String,
     Denominator: Number
-})
+});
+
+export const VaccinationModel = mongoose.model('vaccinations', VaccinationSchema);

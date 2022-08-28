@@ -1,11 +1,11 @@
 import { vaccinationController } from "../controllers/vaccinationController";
-import {Request, Response, NextFunction} from 'express';
+import {Request, Response, NextFunction, Router} from 'express';
 
-const routes = (app:any) => {
+const routes = (app:Router) => {
     app.route('/vaccine-summary')
     .get((req: Request, res: Response, next:NextFunction) => {
         // middleware
-        console.info('in middleware', req['method']);
+        // console.info('in middleware', req['method']);
         next();
     }, vaccinationController.summary);
     

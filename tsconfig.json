@@ -17,9 +17,10 @@
         "noUnusedLocals": true,
         "strictBindCallApply": true,
         "strictFunctionTypes": true,
-        "strictNullChecks": false,
+        "strictNullChecks": false
     },
     "include": [
+        "./test/*.ts",
         "./src/**/*.ts",
         "index.ts"
     ]
