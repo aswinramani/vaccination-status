@@ -55,13 +55,6 @@
     "@types/connect" "*"
     "@types/node" "*"
 
-"@types/chai-http@^4.2.0":
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/@types/chai-http/-/chai-http-4.2.0.tgz#223c9a3e7ce664767df3820501a91283382d756f"
-  integrity sha512-yb8+55cAuiVB7/yfnHIME5Ppw0LMUE6QFbuBFk5LewleI5pvYvtoXIEUAst3z3m0wZ2hLp1XeqllzffOSJSQuA==
-  dependencies:
-    chai-http "*"
-
 "@types/chai@4", "@types/chai@^4.3.3":
   version "4.3.3"
   resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.3.3.tgz#3c90752792660c4b562ad73b3fbd68bf3bc7ae07"
@@ -1194,7 +1187,7 @@ caniuse-lite@^1.0.30000844:
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001382.tgz#4d37f0d0b6fffb826c8e5e1c0f4bf8ce592db949"
   integrity sha512-2rtJwDmSZ716Pxm1wCtbPvHtbDWAreTPxXbkc5RkKglow3Ig/4GNGazDI9/BVnXbG/wnv6r3B5FEbkfg9OcTGg==
 
-chai-http@*, chai-http@^4.3.0:
+chai-http@^4.3.0:
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/chai-http/-/chai-http-4.3.0.tgz#3c37c675c1f4fe685185a307e345de7599337c1a"
   integrity sha512-zFTxlN7HLMv+7+SPXZdkd5wUlK+KxH6Q7bIEMiEx0FK3zuuMqL7cwICAQ0V1+yYRozBburYuxN1qZstgHpFZQg==
@@ -1563,6 +1556,11 @@ expand-range@^1.8.1:
   integrity sha512-AFASGfIlnIbkKPQwX1yHaDjFvh/1gyKJODme52V6IORh69uEYgZp0o9C+qsIGNVEiuuhQU0CSSl++Rlegg1qvA==
   dependencies:
     fill-range "^2.1.0"
+
+express-rate-limit@^6.5.2:
+  version "6.5.2"
+  resolved "https://registry.yarnpkg.com/express-rate-limit/-/express-rate-limit-6.5.2.tgz#5d2322e680ed43ae303b775fa7e19496c9014b58"
+  integrity sha512-N0cG/5ccbXfNC+FxRu7ujm2HjKkygF2PL7KLAf/hct9uqKB5QkZVizb/hEst6tUBXnfhblYWgOorN2eY+Saerw==
 
 express@^4.18.1:
   version "4.18.1"

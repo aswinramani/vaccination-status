@@ -9,6 +9,12 @@ const ErrorCodes = {
             'case4': 'week cannot be greater than 53',
             'case5': 'start week cannot be greater than current week for this year'
         }
+    },
+    'RateLimiter': {
+        'code': 429,
+        'messages': {
+            'text': 'You have exceeded the 5 requests per minute limit!'
+        }
     }
     
 }

@@ -2,9 +2,11 @@ import * as express from 'express';
 import * as mongoose from 'mongoose';
 import * as bodyParser from "body-parser";
 import vaccinationRoutes from './src/routes/vaccinationRoutes';
+import middleware from './middleware';
 
 const app = express();
 const PORT:number =  4000;
+// 
 const uri:string = "";
 
 mongoose.connect(uri, {}, (err) => {
@@ -16,6 +18,7 @@ mongoose.connect(uri, {}, (err) => {
 // bodyparser
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+app.use(middleware);
 // routes
 vaccinationRoutes(app);
 
