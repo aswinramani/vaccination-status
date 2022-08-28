@@ -1,5 +1,3 @@
-STATUS: IN DEVELOPMENT
-
 Commands:
 ```
 1. yarn install
