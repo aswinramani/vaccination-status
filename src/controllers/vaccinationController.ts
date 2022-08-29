@@ -36,8 +36,8 @@ const summary = (req: Request, res: Response) => {
         if (yearWeekIdx > -1) {
           end = yearWeekIdx + range;
           vaccinationSummary['summary'].push({
-            'startWeek': yearWeekList[yearWeekIdx],
-            'endWeek': yearWeekList[end] || reQuery['dateTo'],
+            'weekStart': yearWeekList[yearWeekIdx],
+            'weekEnd': yearWeekList[end] || reQuery['dateTo'],
             'NumberDosesReceived': vaccinations.slice(i, i+range).reduce((accumulator:number , vaccination:VaccinationResult):number=>{
                 return accumulator+vaccination['NumberDosesReceived'];
               }, 0)
